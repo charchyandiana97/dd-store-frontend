@@ -11,6 +11,13 @@ export default function App() {
   const [page, setPage] = useState('store')
   const [form, setForm] = useState({ name: '', email: '', address: '', card: '' })
   const [loading, setLoading] = useState(true)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     fetchProducts()
@@ -58,10 +65,10 @@ export default function App() {
   // SUCCESS PAGE
   if (page === 'success') {
     return (
-      <div style={{ fontFamily: 'sans-serif', textAlign: 'center', padding: '100px 20px' }}>
+      <div style={{ fontFamily: 'sans-serif', textAlign: 'center', padding: '60px 20px' }}>
         <div style={{ fontSize: '80px' }}>🎉</div>
-        <h1 style={{ fontSize: '36px', margin: '20px 0 10px' }}>Order Placed!</h1>
-        <p style={{ color: 'gray', fontSize: '18px' }}>Thanks {form.name}, your order is on its way!</p>
+        <h1 style={{ fontSize: '28px', margin: '20px 0 10px' }}>Order Placed!</h1>
+        <p style={{ color: 'gray', fontSize: '16px' }}>Thanks {form.name}, your order is on its way!</p>
         <button
           onClick={() => { setPage('store'); setForm({ name: '', email: '', address: '', card: '' }) }}
           style={{ marginTop: '30px', background: '#000', color: '#fff', border: 'none', padding: '15px 40px', borderRadius: '5px', cursor: 'pointer', fontSize: '16px' }}
@@ -75,11 +82,11 @@ export default function App() {
   // CHECKOUT PAGE
   if (page === 'checkout') {
     return (
-      <div style={{ fontFamily: 'sans-serif', maxWidth: '600px', margin: '0 auto', padding: '40px 20px' }}>
+      <div style={{ fontFamily: 'sans-serif', maxWidth: '600px', margin: '0 auto', padding: '20px 16px' }}>
         <button onClick={() => setPage('store')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', marginBottom: '20px' }}>← Back to Store</button>
-        <h1 style={{ marginBottom: '30px' }}>Checkout</h1>
+        <h1 style={{ marginBottom: '20px', fontSize: '24px' }}>Checkout</h1>
 
-        <div style={{ background: '#f9f9f9', borderRadius: '10px', padding: '20px', marginBottom: '30px' }}>
+        <div style={{ background: '#f9f9f9', borderRadius: '10px', padding: '16px', marginBottom: '20px' }}>
           <h3 style={{ margin: '0 0 15px' }}>Order Summary</h3>
           {cart.map((item, index) => (
             <div key={index} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #eee' }}>
@@ -111,7 +118,6 @@ export default function App() {
               />
             </div>
           ))}
-
           <button
             onClick={handleOrder}
             disabled={!form.name || !form.email || !form.address || !form.card}
@@ -132,30 +138,49 @@ export default function App() {
   // STORE PAGE
   return (
     <div style={{ fontFamily: 'sans-serif' }}>
-      <div style={{ background: '#000', color: '#fff', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 }}>
-        <h2 style={{ margin: 0 }}>🛍️ DD Store</h2>
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', width: '250px', fontSize: '14px', outline: 'none' }}
-        />
-        <button onClick={() => setCartOpen(!cartOpen)} style={{ background: '#fff', color: '#000', border: 'none', padding: '8px 16px', borderRadius: '20px', cursor: 'pointer', fontWeight: 'bold' }}>
+
+      {/* NAVBAR */}
+      <div style={{ background: '#000', color: '#fff', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 }}>
+        <h2 style={{ margin: 0, fontSize: isMobile ? '16px' : '20px' }}>🛍️ DD Store</h2>
+        {!isMobile && (
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', width: '250px', fontSize: '14px', outline: 'none' }}
+          />
+        )}
+        <button onClick={() => setCartOpen(!cartOpen)} style={{ background: '#fff', color: '#000', border: 'none', padding: '8px 14px', borderRadius: '20px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>
           Cart ({cart.length})
         </button>
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', padding: '20px 30px', borderBottom: '1px solid #eee' }}>
+      {/* MOBILE SEARCH */}
+      {isMobile && (
+        <div style={{ padding: '10px 16px', background: '#111' }}>
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', width: '100%', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+          />
+        </div>
+      )}
+
+      {/* CATEGORY FILTERS */}
+      <div style={{ display: 'flex', gap: '8px', padding: '12px 16px', borderBottom: '1px solid #eee', overflowX: 'auto' }}>
         {categories.map(cat => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
             style={{
-              padding: '8px 20px', borderRadius: '20px', border: '1px solid #000',
+              padding: '6px 16px', borderRadius: '20px', border: '1px solid #000',
               background: activeCategory === cat ? '#000' : '#fff',
               color: activeCategory === cat ? '#fff' : '#000',
-              cursor: 'pointer', fontWeight: 'bold', fontSize: '14px'
+              cursor: 'pointer', fontWeight: 'bold', fontSize: '13px',
+              whiteSpace: 'nowrap', flexShrink: 0
             }}
           >
             {cat}
@@ -164,7 +189,9 @@ export default function App() {
       </div>
 
       <div style={{ display: 'flex' }}>
-        <div style={{ flex: 1, padding: '30px' }}>
+
+        {/* PRODUCTS */}
+        <div style={{ flex: 1, padding: isMobile ? '12px' : '30px' }}>
           {loading ? (
             <div style={{ textAlign: 'center', padding: '60px', color: 'gray' }}>
               <p style={{ fontSize: '40px' }}>⏳</p>
@@ -176,16 +203,16 @@ export default function App() {
               <p style={{ fontSize: '18px' }}>No products found</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: cartOpen ? 'repeat(3, 1fr)' : 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : cartOpen ? 'repeat(3, 1fr)' : 'repeat(4, 1fr)', gap: isMobile ? '10px' : '20px' }}>
               {products.map(product => (
-                <div key={product.id} style={{ border: '1px solid #ddd', borderRadius: '10px', padding: '20px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '60px' }}>{product.image}</div>
-                  <h3 style={{ margin: '10px 0 5px' }}>{product.name}</h3>
-                  <p style={{ color: 'gray', fontSize: '14px', margin: '0 0 5px' }}>{product.category}</p>
-                  <p style={{ fontWeight: 'bold', fontSize: '18px', margin: '0 0 10px' }}>${product.price}</p>
+                <div key={product.id} style={{ border: '1px solid #ddd', borderRadius: '10px', padding: isMobile ? '12px' : '20px', textAlign: 'center' }}>
+                  <div style={{ fontSize: isMobile ? '40px' : '60px' }}>{product.image}</div>
+                  <h3 style={{ margin: '8px 0 4px', fontSize: isMobile ? '13px' : '16px' }}>{product.name}</h3>
+                  <p style={{ color: 'gray', fontSize: '12px', margin: '0 0 4px' }}>{product.category}</p>
+                  <p style={{ fontWeight: 'bold', fontSize: isMobile ? '14px' : '18px', margin: '0 0 8px' }}>${product.price}</p>
                   <button
                     onClick={() => addToCart(product)}
-                    style={{ background: '#000', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '5px', cursor: 'pointer', width: '100%' }}
+                    style={{ background: '#000', color: '#fff', border: 'none', padding: isMobile ? '8px' : '10px 20px', borderRadius: '5px', cursor: 'pointer', width: '100%', fontSize: isMobile ? '12px' : '14px' }}
                   >
                     Add to Cart
                   </button>
@@ -195,8 +222,9 @@ export default function App() {
           )}
         </div>
 
+        {/* CART SIDEBAR */}
         {cartOpen && (
-          <div style={{ width: '320px', background: '#f9f9f9', borderLeft: '1px solid #ddd', padding: '20px', minHeight: '100vh', position: 'sticky', top: '60px' }}>
+          <div style={{ width: isMobile ? '100%' : '320px', background: '#f9f9f9', borderLeft: '1px solid #ddd', padding: '20px', minHeight: '100vh', position: isMobile ? 'fixed' : 'sticky', top: isMobile ? 0 : '60px', right: 0, zIndex: 200 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ margin: 0 }}>Your Cart</h3>
               <button onClick={() => setCartOpen(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>✕</button>
