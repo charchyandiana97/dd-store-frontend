@@ -176,7 +176,7 @@ export default function App() {
               <p style={{ fontSize: '18px' }}>No products found</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: cartOpen ? 'repeat(3, 1fr)' : 'repeat(4, 1fr)', gap: '20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: cartOpen ? 'repeat(3, 1fr)' : 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
               {products.map(product => (
                 <div key={product.id} style={{ border: '1px solid #ddd', borderRadius: '10px', padding: '20px', textAlign: 'center' }}>
                   <div style={{ fontSize: '60px' }}>{product.image}</div>
