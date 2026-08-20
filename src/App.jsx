@@ -224,7 +224,7 @@ export default function App() {
 
         {/* CART SIDEBAR */}
         {cartOpen && (
-          <div style={{ width: isMobile ? '100%' : '320px', background: '#f9f9f9', borderLeft: '1px solid #ddd', padding: '20px', minHeight: '100vh', position: isMobile ? 'fixed' : 'sticky', top: isMobile ? 0 : '60px', right: 0, zIndex: 200 }}>
+          <div style={{ width: isMobile ? '100%' : '320px', background: '#f9f9f9', borderLeft: '1px solid #ddd', padding: '20px', minHeight: '100vh', position: isMobile ? 'fixed' : 'sticky', top: 0, right: 0, left: isMobile ? 0 : 'auto', zIndex: 200 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ margin: 0 }}>Your Cart</h3>
               <button onClick={() => setCartOpen(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>✕</button>
